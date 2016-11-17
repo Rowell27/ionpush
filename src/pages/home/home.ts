@@ -67,14 +67,14 @@ export class HomePage {
         } 
     }
 
-    let req = request( options, jsonpush, (err, response, body) => {
+    request( options, jsonpush, (err, response, body) => {
       if (err) throw new Error(err);
       console.log(JSON.stringify(jsonpush));
     });
 
-    this.http.post( 'https://api.ionic.io/push/notifications', req ).subscribe( x=> {
-      console.log(x);
-    });
+    // this.http.post( 'https://api.ionic.io/push/notifications', req, jsonpush ).subscribe( x=> {
+    //   console.log(x);
+    // });
 
     
     // let notification = {
