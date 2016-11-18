@@ -11,22 +11,21 @@
 - In `app.module.ts`, change `app_id` to your Ionic App ID. Change `sender_id` to your SENDER_ID (in Firebase Cloud Messaging)
 
 ### Authenticating Request:
-- Add these codes to  authorize request
+- Add Headers to  authorize request
 
 ```node
-var options = {
-  method: 'GET',
-  url: 'https://api.ionic.io/push/notifications',
-  headers: {
-    'Authorization': 'Bearer ' + token,
-    'Content-Type': 'application/json'
-    }
-  };  request(options, (err, response, body) => {
-    if (err) throw new Error(err);
-    console.log(body);
-  });
+let headers: Headers = new Headers({ 
+      "Content-Type" : "application/json", 
+      "Authorization" : "Bearer " + API_TOKEN
+    });
+let options = new RequestOptions({ "headers" : headers })
 ```
-(where `token` is the API Token of Ionic Cloud App)
+(where `API_TOKEN` is the API Token of your Ionic Cloud App)
 
 ### Sending Push Notification using API
-
+- To send push notification to registered devices:
+```node
+this.http.post("https://api.ionic.io/push/notifications", data , options)
+            .subscribe();
+```
+(where `data` is the JSON body object and `options` is the RequestOptions Argument)
