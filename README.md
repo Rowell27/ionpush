@@ -9,6 +9,7 @@
 
    `ionic platform add android or ionic platform add ios`
 - In `app.module.ts`, change `app_id` to your Ionic App ID. Change `sender_id` to your SENDER_ID (in Firebase Cloud Messaging)
+- In `home.ts`, change `token` to your Ionic Cloud App created `API Token` (create one from your App's Settings> API Tokens)  
 
 ### Authenticating Request:
 - Add Headers to  authorize request
