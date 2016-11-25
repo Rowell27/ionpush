@@ -11,15 +11,29 @@
   <h2>Send a push!</h2>
   <ion-list>
     <ion-item>
+      <ion-label>Your Device Token: <br />{{token}}</ion-label>
+    </ion-item>
+    <ion-item>
       <ion-label floating>Title</ion-label>
       <ion-input [(ngModel)]="title"></ion-input>
     </ion-item>
     <ion-item>
       <ion-label floating>Message</ion-label>
-      <ion-input [(ngModel)]="message"></ion-input>
+      <ion-textarea rows="3" [(ngModel)]="message"></ion-textarea>
     </ion-item>
-    <button ion-button full (click)="getTokens()">Get Tokens</button>
-    <button ion-button full secondary (click)="onSend()">Send</button>
+    <ion-item >
+      <ion-label>Select Devices</ion-label>
+      <ion-select [(ngModel)]="devices" multiple="true" *ngIf="container">
+          <ion-option value="sendAll" >Send to All</ion-option>
+          <ion-option *ngFor="let c of container" value="{{c.token}}">
+            {{c.token}}
+          </ion-option>
+      </ion-select>
+    </ion-item>
+    <button ion-button full (click)="registerDevice()" *ngIf="!token">Register for Push</button>    
+    <button ion-button full (click)="registerDevice()" *ngIf="token">Unregister Device</button>    
+    <button ion-button full (click)="getSelectedDevices(devices)">Check Selected Devices</button>
+    <button ion-button full secondary (click)="onSend(devices)">Send</button>
   </ion-list>
 
   

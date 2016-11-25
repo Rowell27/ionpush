@@ -1,6 +1,6 @@
 // <reference path = "../../../typings/globals/request/index.d.ts" />
 import { Component } from '@angular/core';
-import { Push } from '@ionic/cloud-angular';
+import { Push, PushToken } from '@ionic/cloud-angular';
 import { Http, Headers, RequestOptions } from '@angular/http';
 import { NavController, AlertController } from 'ionic-angular';
 
@@ -9,16 +9,19 @@ import { NavController, AlertController } from 'ionic-angular';
   templateUrl: 'home.html'
 })
 export class HomePage {
-
-  url = "https://api.ionic.io"
-  deviceToken = 'd1pEWtN2dHk:APA91bEoWUbrg_2xYEudBlEY-75hQ_1aKPHHLJXR56x4H9xpXq8HRBhqMiIJS3BwV1jLI4RsYYLqsVwT0oBUwa6r-tKy19AW0V2bSQ2w3MdbMgvqBQXAKtLR8PzaSq9C6CSMoYGRc4W6';
-  token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI0NDNlZjUxOC03NDg0LTQ2YmEtYWI0YS00OGVkZjBmNTRkMjUifQ.kHa-neGaPXRyf0_O9Gz5N22CtMaECH2mgyILRGOq0oY'
+  container = [];
+  devices: any;
+  url = "https://api.ionic.io/"
+  API_Token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI0NDNlZjUxOC03NDg0LTQ2YmEtYWI0YS00OGVkZjBmNTRkMjUifQ.kHa-neGaPXRyf0_O9Gz5N22CtMaECH2mgyILRGOq0oY'
+  pushToken: PushToken
+  token: string;
+  deviceTokens;
   title: string;
   message: string;
 
   headers: Headers = new Headers({ 
       "Content-Type" : "application/json", 
-      "Authorization" : "Bearer " + this.token  
+      "Authorization" : "Bearer " + this.API_Token  
     });
   options = new RequestOptions({ "headers" : this.headers })
 
@@ -27,7 +30,10 @@ export class HomePage {
               alertCtrl: AlertController,
               private http: Http
               ) {
-    
+
+    // this.events.subscribe("Hobbit", re => {
+    //   console.log("The LOTR:", re[0]);
+    // });            
     this.push.rx.notification()
       .subscribe((msg) => {
         let alert = alertCtrl.create({
@@ -37,38 +43,95 @@ export class HomePage {
         });
         alert.present();
       });
+  }
 
+  ionViewWillEnter(){
+    this.getTokens();
+  }
+
+  clearAll(){
+    this.title = "";
+    this.message = "";
   }
 
   getTokens(){
-
-    this.http.get( this.url + "/push/tokens" , this.options )
-        .subscribe((abc)=>{
-            console.log("Response: ",abc );
+    this.http.request( this.url + "push/tokens" , this.options )
+        .subscribe( res => {
+            this.deviceTokens = JSON.parse(res['_body']).data;
+              console.log("Response: " + this.deviceTokens.length );
+            this.deviceTokens.forEach(devToken => {
+              console.log("Token: " , devToken.token);
+              if(devToken.valid){
+                this.container.push(devToken);
+              }
+            });
         }, (e)=>{
             console.log(e);
-        })
-    
+        });
   }
 
-  onSend(){
+  registerDevice(){
+    if(!this.pushToken) 
+      this.push.register().then((pushToken) => {
+        return this.push.saveToken(pushToken);
+      }).then((pushToken) => {
+          this.pushToken = pushToken;
+          this.token = pushToken.token;
+          console.log('Token saved:', pushToken.token);
+          alert( "Successfully registered! Assigned Token: " + pushToken.token );
+      },(e)=>{ alert("Registered failed" + e); });
+    else
+      this.push.unregister().then((pushToken)=>{
+        alert("Device successfully unregistered.");
+        console.log("Push Token: ", this.pushToken);
+        this.http.delete( this.url + "push/tokens/" + this.pushToken.id , this.options)
+            .subscribe(()=>{
+              console.log("Token Deleted")
+            }, (e) => {
+              console.log("Error" + e);
+            });            
+              this.token= '';
+              this.pushToken = null;
+              this.getTokens();
+      }, (e)=>{
+        alert("Unregistered failed! Error: " + e);
+      })
+  }
 
+  // selectAll(){
+  //   this.devices = ["Send to All", this.deviceTokens];
+  // }
+
+  getSelectedDevices(devices){
+    if(!devices)
+      alert('No device(s) selected')
+    else
+      alert("Selected Devices " + devices);
+  }
+
+  onSend(devices){
     let data = {
-        // "tokens": [this.deviceToken],
-        "send_to_all" : true,
-        "profile": "ionpush2",
-        "notification": {
-          "title" : this.title,
-          "message": this.message
-          }
-      }
-
-      this.http.post( this.url + "/push/notifications", data , this.options)
+      "tokens": devices,
+      "send_to_all" : false,
+      "profile": "ionpush2",
+      "notification": {
+        "title" : this.title,
+        "message": this.message
+        }
+    }
+    if(devices == "sendAll"){
+      data.tokens = [];
+      data.send_to_all = true;
+    }
+    if(!devices) alert("No device(s) selected");
+    
+      this.http.post( this.url + "push/notifications", data , this.options)
             .subscribe(()=>{
               console.log("Push successfully send");
+              this.clearAll();
             }, (e) =>{
               console.log("Push failed to send. Error " + e);
             });
-     }
+        }
 
 }
