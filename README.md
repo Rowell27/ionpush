@@ -1,5 +1,8 @@
 # IonPush Documentation
 
+Visit this link for the documentation:
+https://docs.google.com/document/d/129QdetxGvFql0uPcW-87sx-XRSOAy4Ci9ZmOZau1oCI/edit#
+
 ## Set-up and Procedures:
 - Clone this repository
 - Install needed modules and plugins using this command : 
