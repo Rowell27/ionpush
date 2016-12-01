@@ -31,9 +31,7 @@ export class HomePage {
               private http: Http
               ) {
 
-    // this.events.subscribe("Hobbit", re => {
-    //   console.log("The LOTR:", re[0]);
-    // });            
+           
     this.push.rx.notification()
       .subscribe((msg) => {
         let alert = alertCtrl.create({
