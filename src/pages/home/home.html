@@ -24,16 +24,16 @@
     <ion-item >
       <ion-label>Select Devices</ion-label>
       <ion-select [(ngModel)]="devices" multiple="true" *ngIf="container">
-          <ion-option value="sendAll" >Send to All</ion-option>
-          <ion-option *ngFor="let c of container" value="{{c.token}}">
+          <ion-option value="sendAll" (click)="onClickSelectAll()">Send to All</ion-option>
+          <ion-option *ngFor="let c of container" value="{{c.token}}" >
             {{c.token}}
           </ion-option>
       </ion-select>
     </ion-item>
-    <button ion-button full (click)="registerDevice()" *ngIf="!token">Register for Push</button>    
-    <button ion-button full (click)="registerDevice()" *ngIf="token">Unregister Device</button>    
-    <button ion-button full (click)="getSelectedDevices(devices)">Check Selected Devices</button>
-    <button ion-button full secondary (click)="onSend(devices)">Send</button>
+    <button ion-button full (click)="onClickRegisterDevice()" *ngIf="!token">Register for Push</button>    
+    <button ion-button full (click)="onClickRegisterDevice()" *ngIf="token">Unregister Device</button>    
+    <!--<button ion-button full (click)="getSelectedDevices(devices)">Check Selected Devices</button>-->
+    <button ion-button full secondary (click)="onClickSend(devices)">Send</button>
   </ion-list>
 
   

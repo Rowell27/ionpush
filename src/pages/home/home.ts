@@ -9,11 +9,11 @@ import { NavController, AlertController } from 'ionic-angular';
   templateUrl: 'home.html'
 })
 export class HomePage {
-  container = [];
   devices: any;
   url = "https://api.ionic.io/"
   API_Token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI0NDNlZjUxOC03NDg0LTQ2YmEtYWI0YS00OGVkZjBmNTRkMjUifQ.kHa-neGaPXRyf0_O9Gz5N22CtMaECH2mgyILRGOq0oY'
   pushToken: PushToken
+  container = [];
   token: string;
   deviceTokens;
   title: string;
@@ -30,8 +30,7 @@ export class HomePage {
               alertCtrl: AlertController,
               private http: Http
               ) {
-
-           
+    //Receive notification          
     this.push.rx.notification()
       .subscribe((msg) => {
         let alert = alertCtrl.create({
@@ -40,6 +39,7 @@ export class HomePage {
           buttons: ['Dismiss']
         });
         alert.present();
+        console.log("Push notification receieved.");
       });
   }
 
@@ -53,6 +53,7 @@ export class HomePage {
   }
 
   getTokens(){
+    this.container = [];
     this.http.request( this.url + "push/tokens" , this.options )
         .subscribe( res => {
             this.deviceTokens = JSON.parse(res['_body']).data;
@@ -61,14 +62,21 @@ export class HomePage {
               console.log("Token: " , devToken.token);
               if(devToken.valid){
                 this.container.push(devToken);
-              }
+                }
             });
         }, (e)=>{
             console.log(e);
         });
   }
 
-  registerDevice(){
+  // displaytokens(){
+  //   this.http.get( this.url + "push/tokens", this.options )
+  //       .subscribe( res => {
+          
+  //       });
+  // }
+
+  onClickRegisterDevice(){
     if(!this.pushToken) 
       this.push.register().then((pushToken) => {
         return this.push.saveToken(pushToken);
@@ -77,6 +85,7 @@ export class HomePage {
           this.token = pushToken.token;
           console.log('Token saved:', pushToken.token);
           alert( "Successfully registered! Assigned Token: " + pushToken.token );
+          this.getTokens();
       },(e)=>{ alert("Registered failed" + e); });
     else
       this.push.unregister().then((pushToken)=>{
@@ -96,18 +105,19 @@ export class HomePage {
       })
   }
 
-  // selectAll(){
-  //   this.devices = ["Send to All", this.deviceTokens];
-  // }
-
-  getSelectedDevices(devices){
-    if(!devices)
-      alert('No device(s) selected')
-    else
-      alert("Selected Devices " + devices);
+  onClickSelectAll(){
+    this.devices = ["Send to All", this.deviceTokens];
   }
 
-  onSend(devices){
+  //Gets the selected recipents (devices) from dropdown box.
+  // getSelectedDevices(devices){
+  //   if(!devices)
+  //     alert('No device(s) selected')
+  //   else
+  //     alert("Selected Devices " + devices);
+  // }
+
+  onClickSend(devices){  
     let data = {
       "tokens": devices,
       "send_to_all" : false,
