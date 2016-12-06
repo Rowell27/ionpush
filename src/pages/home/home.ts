@@ -105,10 +105,6 @@ export class HomePage {
       })
   }
 
-  onClickSelectAll(){
-    this.devices = ["Send to All", this.deviceTokens];
-  }
-
   //Gets the selected recipents (devices) from dropdown box.
   // getSelectedDevices(devices){
   //   if(!devices)
