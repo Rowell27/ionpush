@@ -24,7 +24,7 @@
     <ion-item >
       <ion-label>Select Devices</ion-label>
       <ion-select [(ngModel)]="devices" multiple="true" *ngIf="container">
-          <ion-option value="sendAll" (click)="onClickSelectAll()">Send to All</ion-option>
+          <ion-option value="sendAll">Send to All</ion-option>
           <ion-option *ngFor="let c of container" value="{{c.token}}" >
             {{c.token}}
           </ion-option>
