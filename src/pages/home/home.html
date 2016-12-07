@@ -24,11 +24,14 @@
     <ion-item >
       <ion-label>Select Devices</ion-label>
       <ion-select [(ngModel)]="devices" multiple="true" *ngIf="container">
-          <ion-option value="sendAll">Send to All</ion-option>
           <ion-option *ngFor="let c of container" value="{{c.token}}" >
             {{c.token}}
           </ion-option>
       </ion-select>
+    </ion-item>
+    <ion-item>
+      <ion-label>Send to All</ion-label>
+      <ion-toggle [(ngModel)]="toggleDevices" (click)="onClickSelectAll(toggleDevices)" checked="false"></ion-toggle>
     </ion-item>
     <button ion-button full (click)="onClickRegisterDevice()" *ngIf="!token">Register for Push</button>    
     <button ion-button full (click)="onClickRegisterDevice()" *ngIf="token">Unregister Device</button>    

@@ -10,6 +10,7 @@ import { NavController, AlertController } from 'ionic-angular';
 })
 export class HomePage {
   devices: any;
+  toggleDevices;
   url = "https://api.ionic.io/"
   API_Token = 'eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJqdGkiOiI0NDNlZjUxOC03NDg0LTQ2YmEtYWI0YS00OGVkZjBmNTRkMjUifQ.kHa-neGaPXRyf0_O9Gz5N22CtMaECH2mgyILRGOq0oY'
   pushToken: PushToken
@@ -44,7 +45,7 @@ export class HomePage {
   }
 
   ionViewWillEnter(){
-    this.getTokens();
+    this.getTokens(); //Get the list of all valid token
   }
 
   clearAll(){
@@ -103,6 +104,20 @@ export class HomePage {
       }, (e)=>{
         alert("Unregistered failed! Error: " + e);
       })
+  }
+
+  onClickSelectAll(toggleDevices){
+    console.log(toggleDevices)
+    if( toggleDevices == true ){ // Checked if Select All toggle is on
+      let selectedTokens = [];
+      this.container.forEach((c) => {
+        selectedTokens.push( c.token );
+      });
+      this.devices = selectedTokens;
+    }
+    else{ // When Select All toggle is off 
+      this.devices = " ";
+    }
   }
 
   //Gets the selected recipents (devices) from dropdown box.
