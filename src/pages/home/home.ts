@@ -70,13 +70,6 @@ export class HomePage {
         });
   }
 
-  // displaytokens(){
-  //   this.http.get( this.url + "push/tokens", this.options )
-  //       .subscribe( res => {
-          
-  //       });
-  // }
-
   onClickRegisterDevice(){
     if(!this.pushToken) 
       this.push.register().then((pushToken) => {
@@ -108,16 +101,12 @@ export class HomePage {
 
   onClickSelectAll(toggleDevices){
     console.log(toggleDevices)
-    if( toggleDevices == true ){ // Checked if Select All toggle is on
-      let selectedTokens = [];
-      this.container.forEach((c) => {
-        selectedTokens.push( c.token );
-      });
-      this.devices = selectedTokens;
-    }
-    else{ // When Select All toggle is off 
-      this.devices = " ";
-    }
+    if( toggleDevices == true ){ //Checked if devices are all selected
+            this.devices = [];
+            this.container.forEach( (c) => this.devices.push( c.token ));
+            return;
+        }
+            this.devices = [];
   }
 
   //Gets the selected recipents (devices) from dropdown box.
